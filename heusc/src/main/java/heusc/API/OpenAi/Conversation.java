@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.util.NonThrowingAutoCloseable;
 
 import heusc.API.OpenAi.oaMessage.Content;
 import heusc.API.OpenAi.oaMessage.ImageUrlContent;
@@ -60,7 +59,6 @@ public class Conversation {
                 Run run = Run.createRun(thread.id, OpenAi.assistantID, additionalMessages);
                 run.pollCompletion(20, TimeUnit.SECONDS).join();
                 oaMessage latestMessage = thread.retrieveLatestMessages(1).get(0);
-                block.close();
                 return latestMessage;
             } catch (Exception e) {
                 throw new RuntimeException("Failed to create or poll response", e);
@@ -68,7 +66,7 @@ public class Conversation {
         });
     }
 
-    private class BlockOverlappingPolls implements NonThrowingAutoCloseable {
+    private class BlockOverlappingPolls implements AutoCloseable {
         @Override
         public void close() {
             pollingResponse = false;

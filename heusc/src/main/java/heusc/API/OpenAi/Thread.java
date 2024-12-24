@@ -52,7 +52,6 @@ public class Thread {
         try {
             HttpResponse<String> response = Http.createRequest(request).call();
             if (response.statusCode() == 200) {
-                System.out.println(response.body());
                 MessageRetrievalResponse pojoResponse = MessageRetrievalResponse.mrrAdapter.fromJson(response.body());
                 return pojoResponse.data;
             } else {
