@@ -38,7 +38,8 @@ public class App {
             EndCall.createCommand(),
             InspireMe.createCommand(),
             DadJoke.createCommand(),
-            FunFact.createCommand()
+            FunFact.createCommand(),
+            NewThread.createCommand()
         ));
 
         // register listeners

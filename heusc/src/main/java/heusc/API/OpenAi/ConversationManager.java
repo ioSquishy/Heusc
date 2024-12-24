@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.util.NonThrowingAutoCloseable;
 
 import heusc.Utility.MessageSplitter;
@@ -17,6 +18,15 @@ import heusc.Utility.MessageSplitter.UnsplittableException;
 public class ConversationManager {
     private static HashMap<Long /*channel id*/, Conversation> conversations = new HashMap<Long, Conversation>();
     private static final int discordMessageCharLimit = 2000;
+
+    public static MessageCreateListener getMessageCreateListener() {
+        return new MessageCreateListener() {
+            @Override
+            public void onMessageCreate(MessageCreateEvent event) {
+                handleMessageCreateEvent(event);
+            }
+        };
+    }
 
     public static void handleMessageCreateEvent(MessageCreateEvent event) {
         if (!userIsWhitelisted(event.getMessageAuthor().getId())) {
@@ -70,6 +80,15 @@ public class ConversationManager {
         }
 
         return convo;
+    }
+
+    public static boolean deleteConversation(long channelID) {
+        Conversation removedConvo = conversations.remove(channelID);
+        if (removedConvo != null) {
+            return removedConvo.deleteThread();
+        } else {
+            return false;
+        }
     }
 
     private static final HashSet<Long> whitelistedIds = new HashSet<Long>();

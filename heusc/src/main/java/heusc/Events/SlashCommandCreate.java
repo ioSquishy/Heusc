@@ -9,6 +9,7 @@ import heusc.Commands.DadJoke;
 import heusc.Commands.EndCall;
 import heusc.Commands.FunFact;
 import heusc.Commands.InspireMe;
+import heusc.Commands.NewThread;
 import heusc.Commands.Ping;
 
 public class SlashCommandCreate {
@@ -21,6 +22,7 @@ public class SlashCommandCreate {
                 case "inspireme" : InspireMe.runCommand(interaction); break;
                 case "dadjoke" : DadJoke.runCommand(interaction); break;
                 case "funfact" : FunFact.runCommand(interaction); break;
+                case "newthread" : NewThread.runCommand(interaction);
             }
         });
     }
