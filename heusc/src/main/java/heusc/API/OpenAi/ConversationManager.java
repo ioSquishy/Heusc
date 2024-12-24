@@ -84,11 +84,7 @@ public class ConversationManager {
 
     public static boolean deleteConversation(long channelID) {
         Conversation removedConvo = conversations.remove(channelID);
-        if (removedConvo != null) {
-            return removedConvo.deleteThread();
-        } else {
-            return false;
-        }
+        return removedConvo != null ? removedConvo.deleteThread() : false;
     }
 
     private static final HashSet<Long> whitelistedIds = new HashSet<Long>();
