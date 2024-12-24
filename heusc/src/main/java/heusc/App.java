@@ -8,6 +8,7 @@ import heusc.API.OpenAi.oaMessage.TextContent;
 import heusc.Commands.*;
 import heusc.Events.*;
 
+import java.util.Scanner;
 import java.util.Set;
 
 import org.javacord.api.DiscordApi;
@@ -31,6 +32,7 @@ public class App {
 
         // initialize stuff
         ConversationManager.initializeWhitelist();
+        startCommandLineCommandHandler();
 
         // create commands
         api.bulkOverwriteGlobalApplicationCommands(Set.of(
@@ -47,5 +49,38 @@ public class App {
         MessageCreate.registerListener();
         ReactionAdd.registerListener();
         // ButtonClick.registerListener();
+    }
+
+    public static void startCommandLineCommandHandler() {
+        new Thread(() -> {
+            try (Scanner sysin = new Scanner(System.in)) {
+                String input = "";
+                while (!input.equals("stop")) {
+                    input = sysin.nextLine();
+                    String[] commandParts = input.split(" ");
+
+                    if (commandParts.length != 3) {
+                        System.err.println("format: [command] [action] [parameter]");
+                        continue;
+                    }
+
+                    switch (commandParts[0]) {
+                        case "whitelist":
+                            switch (commandParts[1]) {
+                                case "add": 
+                                    ConversationManager.addUserToWhitelist(Long.parseLong(commandParts[2]));
+                                    continue;
+                                case "remove":
+                                    ConversationManager.removeUserFromWhitelist(Long.parseLong(commandParts[2]));
+                                    continue;
+                                default: continue;
+                            }
+                        default: continue;
+                    }
+                }
+                System.out.println("stopped");
+                App.api.disconnect();
+            }
+        }).start();
     }
 }

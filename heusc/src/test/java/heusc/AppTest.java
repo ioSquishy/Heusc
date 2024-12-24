@@ -20,7 +20,12 @@ import heusc.API.OpenAi.Thread.MessageRetrievalResponse;
 @SuppressWarnings("unused")
 public class AppTest {
     public static void main(String[] args) throws Exception {
-        idWhitelistTest();
+        ConversationManager.initializeWhitelist();
+        commandLineTest();
+    }
+
+    public static void commandLineTest() {
+        App.startCommandLineCommandHandler();
     }
 
     public static void idWhitelistTest() {
