@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.javacord.api.entity.channel.TextChannel;
@@ -28,11 +29,31 @@ public class ConversationManager {
         };
     }
 
-    public static void handleMessageCreateEvent(MessageCreateEvent event) {
-        if (!userIsWhitelisted(event.getMessageAuthor().getId())) {
+    public static void handleMessageCreateEvent(MessageCreateEvent messageEvent) {
+        if (!userIsWhitelisted(messageEvent.getMessageAuthor().getId())) {
             return;
         }
 
+        java.lang.Thread responseThread = new java.lang.Thread(() -> {
+            try {
+                java.lang.Thread.sleep(2000);
+                replyToMessage(messageEvent);
+            } catch (InterruptedException e) {
+                // expected, do nothing
+            } catch (Exception e) {
+                e.printStackTrace();
+                messageEvent.getChannel().sendMessage("Error");
+            }
+        });
+        responseThread.setDaemon(true);
+        responseThread.start();
+
+        messageEvent.getChannel().addUserStartTypingListener(typingEvent -> {
+            responseThread.interrupt();
+        }).removeAfter(2100, TimeUnit.MILLISECONDS);
+    }
+
+    private static void replyToMessage(MessageCreateEvent event) {
         try (NonThrowingAutoCloseable typingIndicator = event.getChannel().typeContinuously()) {
             Conversation convo = getConversation(event.getChannel().getId());
             convo.appendDiscordMessageToThread(event.getMessage());
@@ -53,7 +74,7 @@ public class ConversationManager {
                 typingIndicator.close();
             });
         } catch (Exception e) {
-            event.getChannel().sendMessage("Error: " + e.getMessage());
+            event.getChannel().sendMessage("Error");
             e.printStackTrace();
         }
     }

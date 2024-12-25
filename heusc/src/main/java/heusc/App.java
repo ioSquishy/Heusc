@@ -29,7 +29,6 @@ public class App {
         .add(new MessageTextContentAdapter()).build();
     
     public static void main(String[] args) {
-
         // initialize stuff
         ConversationManager.initializeWhitelist();
         startCommandLineCommandHandler();

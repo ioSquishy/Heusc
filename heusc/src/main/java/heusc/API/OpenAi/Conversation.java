@@ -34,7 +34,7 @@ public class Conversation {
     }
 
     public void appendDiscordMessageToThread(Message message) {
-        TextContent textContent = TextContent.of(message.getContent());
+        
         List<ImageUrlContent> imageUrlContent = message.getAttachments().stream()
             .filter(attachment -> attachment.isImage())
             .map(attachment -> attachment.getUrl().toString())
@@ -42,7 +42,10 @@ public class Conversation {
             .collect(Collectors.toList());
         
         List<Content> content = new ArrayList<Content>(imageUrlContent.size() + 1);
-        content.add(textContent);
+
+        if (!message.getContent().isBlank()) {
+            content.add(TextContent.of(message.getContent()));
+        }
         content.addAll(imageUrlContent);
 
         additionalMessages.add(oaMessage.userMessageOf(content));
