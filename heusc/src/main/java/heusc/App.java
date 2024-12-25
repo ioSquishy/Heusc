@@ -6,6 +6,7 @@ import heusc.API.OpenAi.oaMessage.ImageUrlContent;
 import heusc.API.OpenAi.oaMessage.MessageTextContentAdapter;
 import heusc.API.OpenAi.oaMessage.TextContent;
 import heusc.Commands.*;
+import heusc.Commands.CommandLine.Whitelist;
 import heusc.Events.*;
 
 import java.util.Scanner;
@@ -64,17 +65,10 @@ public class App {
                     }
 
                     switch (commandParts[0]) {
-                        case "whitelist":
-                            switch (commandParts[1]) {
-                                case "add": 
-                                    ConversationManager.addUserToWhitelist(Long.parseLong(commandParts[2]));
-                                    continue;
-                                case "remove":
-                                    ConversationManager.removeUserFromWhitelist(Long.parseLong(commandParts[2]));
-                                    continue;
-                                default: continue;
-                            }
-                        default: continue;
+                        case "whitelist": Whitelist.handleCommand(commandParts); continue;
+                        default:
+                            System.err.println("command does not exist");
+                            continue;
                     }
                 }
                 System.out.println("stopped");
