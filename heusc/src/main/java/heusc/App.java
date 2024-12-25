@@ -6,7 +6,7 @@ import heusc.API.OpenAi.oaMessage.ImageUrlContent;
 import heusc.API.OpenAi.oaMessage.MessageTextContentAdapter;
 import heusc.API.OpenAi.oaMessage.TextContent;
 import heusc.Commands.*;
-import heusc.Commands.CommandLine.Whitelist;
+import heusc.Commands.CommandLine.*;
 import heusc.Events.*;
 
 import java.util.Scanner;
@@ -41,14 +41,15 @@ public class App {
             InspireMe.createCommand(),
             DadJoke.createCommand(),
             FunFact.createCommand(),
-            NewThread.createCommand()
+            NewThread.createCommand(),
+            UserInfo.createUserContextMenu()
         ));
 
         // register listeners
         SlashCommandCreate.registerListener();
+        UserContextMenuCommand.registerListener();
         MessageCreate.registerListener();
         ReactionAdd.registerListener();
-        // ButtonClick.registerListener();
     }
 
     public static void startCommandLineCommandHandler() {
