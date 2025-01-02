@@ -3,14 +3,16 @@ package heusc.API.OpenAi;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+
+import org.tinylog.Logger;
 
 import com.squareup.moshi.JsonAdapter;
 
 import heusc.App;
 import heusc.Utility.Http;
+import heusc.Utility.Http.CallableRequest;
 
 public class Run {
     private static final JsonAdapter<Run> runAdapter = App.MOSHI.adapter(Run.class);
@@ -80,6 +82,7 @@ public class Run {
                         java.lang.Thread.sleep(pollDurationMillis);
                     } catch (InterruptedException e) {
                         java.lang.Thread.currentThread().interrupt();
+                        Logger.debug("Polling of run {} interrupted.\nReason: {}", this.id, e);
                         throw new RuntimeException("The polling was interrupted", e);
                     }
 
@@ -87,15 +90,18 @@ public class Run {
                 }
 
                 if (currentPoll >= maxPolls) {
+                    Logger.debug("Poll timed out, max polls reached.");
                     throw new RuntimeException("Poll timed out, max polls reached.");
                 }
 
                 if (this.isIncomplete()) {
+                    Logger.debug("Run incomplete.Reason: {}", this.getIncompleteReason());
                     throw new IncompleteException(this.getIncompleteReason());
                 }
 
                 return this;
             } catch (Exception e) {
+                Logger.error(e);
                 throw new RuntimeException("Failed to poll the run", e);
             }
         });
@@ -113,10 +119,10 @@ public class Run {
             if (response.statusCode() == 200) {
                 return runAdapter.fromJson(response.body());
             } else {
-                System.err.println("retrieveRun() failed: " + response.body());
+                Logger.error("Status code: {}\nResponse Message: {}", response.statusCode(), response.body());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
         return null;
     }
@@ -147,17 +153,16 @@ public class Run {
 
         public Run createRun() {
             String postUrl = "https://api.openai.com/v1/threads/" + this.thread_id + "/runs";
-            Callable<HttpResponse<String>> requestRunCreation = Http.createRequest(Http.POST(postUrl, OpenAi.headers, this.toJson()));
+            CallableRequest requestRunCreation = Http.createRequest(Http.POST(postUrl, OpenAi.headers, this.toJson()));
             try {
                 HttpResponse<String> response = requestRunCreation.call();
                 if (response.statusCode() == 200) {
                     return runAdapter.fromJson(response.body());
                 } else {
-                    System.err.println("requestRunCreation failed: " + response.body());
-                    System.err.println(this.toJson());
+                    Logger.error("Status code: {}\nRequest Json: {}\nResponse Message: {}", response.statusCode(), this.toJson(), response.body());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.error(e);
             }
             return null;
         }

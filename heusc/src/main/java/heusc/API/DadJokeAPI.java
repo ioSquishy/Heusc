@@ -4,6 +4,8 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.tinylog.Logger;
+
 import heusc.Utility.Http;
 
 // https://icanhazdadjoke.com/api
@@ -20,7 +22,7 @@ public class DadJokeAPI {
             HttpResponse<String> response = jokeRequest.call();
             return response.body();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
             return e.getMessage();
         }
     }

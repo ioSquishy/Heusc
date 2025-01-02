@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,8 +13,8 @@ import org.javacord.api.interaction.SlashCommandBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.interaction.SlashCommandOptionType;
+import org.tinylog.Logger;
 
-import heusc.App;
 import heusc.API.DadJokeAPI;
 import heusc.API.FunFactAPI;
 import heusc.API.ZenQuoteAPI;
@@ -49,10 +48,10 @@ public class EndCall {
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
-                    vc.getServer().createVoiceChannelBuilder().setName(vc.getName()).setRawPosition(vc.getRawPosition()).create().get();
-                    vc.delete().get();
-                } catch(InterruptedException | ExecutionException e) {
-                    App.api.getOwner().get().join().sendMessage("Failed to end <#" + vc.getId() + ">\nMessage: " + e.getMessage() + "\nCause: " + e.getCause()).join();
+                    vc.getServer().createVoiceChannelBuilder().setName(vc.getName()).setRawPosition(vc.getRawPosition()).create().join();
+                    vc.delete();
+                } catch(Exception e) {
+                    Logger.error(e);
                 }
             }
         };
@@ -68,8 +67,8 @@ public class EndCall {
             case 0 : return ZenQuoteAPI.pullQuote();
             case 1 : return DadJokeAPI.getDadJoke();
             case 2 : return FunFactAPI.getFunFact();
+            default : return "?";
         }
-        return "";
     }
 
     public static SlashCommandBuilder createCommand () {

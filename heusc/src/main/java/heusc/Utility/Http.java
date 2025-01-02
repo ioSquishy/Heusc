@@ -11,6 +11,8 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.tinylog.Logger;
+
 /**
  * Basic abstraction of Http request methods for use with JSON inputs.
  * Good tutorial: https://youtu.be/9oq7Y8n1t00?si=t60rcjT-dZAJmqQA
@@ -22,43 +24,46 @@ public class Http {
     private Http() {}
     
     public static HttpRequest POST(String uri, Map<String, String> headers, String jsonBody) {
+        Logger.trace("uri: {}\nbody: {}", uri, jsonBody);
         try {
             HttpRequest.Builder request = buildRequestHead(uri, headers);
             request.POST(BodyPublishers.ofString(jsonBody));
             return request.build();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
             return null;
         }
     }
 
     public static HttpRequest GET(String uri, Map<String, String> headers) {
+        Logger.trace("uri: {}", uri);
         try {
             HttpRequest.Builder request = buildRequestHead(uri, headers);
             request.GET();
             return request.build();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
             return null;
         }
     }
 
     public static HttpRequest DELETE(String uri, Map<String, String> headers) {
+        Logger.trace("uri: {}", uri);
         try {
             HttpRequest.Builder request = buildRequestHead(uri, headers);
             request.DELETE();
             return request.build();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
             return null;
         }
     }
 
-    public static Callable<HttpResponse<String>> createRequest(HttpRequest request) {
+    public static CallableRequest createRequest(HttpRequest request) {
         return new CallableRequest(request);
     }
 
-    private static class CallableRequest implements Callable<HttpResponse<String>> {
+    public static class CallableRequest implements Callable<HttpResponse<String>> {
         public final HttpRequest request;
 
         public CallableRequest(HttpRequest request) {

@@ -11,6 +11,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.util.NonThrowingAutoCloseable;
+import org.tinylog.Logger;
 
 import heusc.Utility.MessageSplitter;
 import heusc.Utility.TextFile;
@@ -39,10 +40,11 @@ public class ConversationManager {
                 java.lang.Thread.sleep(2000);
                 replyToMessage(messageEvent);
             } catch (InterruptedException e) {
+                Logger.debug("Thread interrupted. (expected)");
                 // expected, do nothing
             } catch (Exception e) {
-                e.printStackTrace();
-                messageEvent.getChannel().sendMessage("Error");
+                Logger.error(e);
+                messageEvent.getChannel().sendMessage(e.getMessage());
             }
         });
         responseThread.setDaemon(true);
@@ -74,8 +76,8 @@ public class ConversationManager {
                 typingIndicator.close();
             });
         } catch (Exception e) {
-            event.getChannel().sendMessage("Error");
-            e.printStackTrace();
+            Logger.error(e);
+            event.getChannel().sendMessage(e.getMessage());
         }
     }
 

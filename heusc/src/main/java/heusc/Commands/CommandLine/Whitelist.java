@@ -15,7 +15,7 @@ public class Whitelist {
                     System.err.println("action does not exist");
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            System.err.println("Not a valid user ID.");
         }
     }
 }

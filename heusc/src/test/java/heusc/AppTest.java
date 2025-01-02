@@ -20,8 +20,7 @@ import heusc.API.OpenAi.Thread.MessageRetrievalResponse;
 @SuppressWarnings("unused")
 public class AppTest {
     public static void main(String[] args) throws Exception {
-        ConversationManager.initializeWhitelist();
-        commandLineTest();
+        manualTest();
     }
 
     public static void commandLineTest() {

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.tinylog.Logger;
+
 import com.squareup.moshi.JsonAdapter;
 
 import heusc.App;
@@ -32,17 +34,22 @@ public class Thread {
             if (response.statusCode() == 200) {
                 return threadAdapter.fromJson(response.body());
             } else {
-                System.err.println("requestThreadCreation failed: " + response.body());
+                Logger.error("Status code: {}\nResponse Message: {}", response.statusCode(), response.body());
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
         return null;
     }
 
+    /**
+     * Retrieves the latest x messages in this thread.
+     * @param numMessages must be between 1-100 (inclusive)
+     * @return list of oaMessage objects
+     */
     public List<oaMessage> retrieveLatestMessages(int numMessages) {
         if (numMessages < 1 || numMessages > 100) {
-            System.err.println("numMessages must be between 1-100 (inclusive)");
+            Logger.warn("numMessages must be between 1-100 (inclusive)");
             return null;
         }
 
@@ -55,10 +62,10 @@ public class Thread {
                 MessageRetrievalResponse pojoResponse = MessageRetrievalResponse.mrrAdapter.fromJson(response.body());
                 return pojoResponse.data;
             } else {
-                System.err.println("retrieveLatestMessages() failed: " + response.body());
+                Logger.error("Status code: {}\nResponse Message: {}", response.statusCode(), response.body());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
         return Collections.emptyList();
     }
@@ -88,10 +95,10 @@ public class Thread {
                 this.deleted = responseThread.deleted;
                 return this.deleted;
             } else {
-                System.err.println("deleteThread() failed: " + response.body());
+                Logger.error("Status code: {}\nResponse Message: {}", response.statusCode(), response.body());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
         return false;
     }

@@ -4,6 +4,8 @@ import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
+import org.tinylog.Logger;
+
 import com.squareup.moshi.JsonAdapter;
 
 import heusc.App;
@@ -24,7 +26,7 @@ public class FunFactAPI {
             FunFact funFact = factAdapter.fromJson(response.body());
             return funFact.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
             return e.getMessage();
         }
     }

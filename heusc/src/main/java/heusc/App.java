@@ -15,6 +15,7 @@ import java.util.Set;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.intent.Intent;
+import org.tinylog.Logger;
 
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
@@ -50,6 +51,8 @@ public class App {
         UserContextMenuCommand.registerListener();
         MessageCreate.registerListener();
         ReactionAdd.registerListener();
+
+        Logger.tag("sysout").info("App initialized!");
     }
 
     public static void startCommandLineCommandHandler() {

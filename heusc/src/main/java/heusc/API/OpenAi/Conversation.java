@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.javacord.api.entity.message.Message;
+import org.tinylog.Logger;
 
 import heusc.API.OpenAi.oaMessage.Content;
 import heusc.API.OpenAi.oaMessage.ImageUrlContent;
@@ -53,6 +54,7 @@ public class Conversation {
 
     public CompletableFuture<oaMessage> pollResponse() {
         if (pollingResponse)  {
+            Logger.debug("Attempted to run a pending thread.");
             throw new RuntimeException("Attempted to run a pending thread.");
         }
 
@@ -64,6 +66,7 @@ public class Conversation {
                 oaMessage latestMessage = thread.retrieveLatestMessages(1).get(0);
                 return latestMessage;
             } catch (Exception e) {
+                Logger.error(e);
                 throw new RuntimeException("Failed to create or poll response", e);
             }
         });

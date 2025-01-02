@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.tinylog.Logger;
+
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Types;
 
@@ -26,6 +28,7 @@ public class ZenQuoteAPI {
             try {
                 refreshQuotes();
             } catch (Exception e) {
+                Logger.error(e);
                 return e.getMessage();
             }
         }

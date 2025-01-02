@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.tinylog.Logger;
+
 /**
  * Manages text files in the data folder of this program
  */
@@ -29,7 +31,7 @@ public class TextFile {
             }
             return file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error(e);
             return false;
         }
     }
@@ -64,7 +66,7 @@ public class TextFile {
                 return Optional.of(content.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error(e);
             return Optional.empty();
         }
     }
@@ -97,7 +99,7 @@ public class TextFile {
             writer.close();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error(e);
             return false;
         }
     }
