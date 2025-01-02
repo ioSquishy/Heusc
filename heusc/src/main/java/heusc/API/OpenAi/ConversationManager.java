@@ -68,10 +68,11 @@ public class ConversationManager {
                             event.getChannel().sendMessage(message).join();
                         });
                     } catch (UnsplittableException e) {
+                        Logger.debug(e);
                         sendResponseAsTxt(String.valueOf(event.getMessageId()), responseText, event.getChannel());
                     }
                 } else {
-                    event.getChannel().sendMessage(responseText);
+                    event.getChannel().sendMessage(responseText).join();
                 }
                 typingIndicator.close();
             });

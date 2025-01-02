@@ -1,0 +1,4 @@
++ add meta-data to messages in the form of a -# line containing thread_id
++ remove conversations hashmap and rely on the message meta-data instead to recapture conversations
+    + delete old thread after thread is cleared
++ add clearthreads cmdline command (use api to get all open threads)
